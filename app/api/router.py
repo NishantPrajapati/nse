@@ -22,10 +22,14 @@ from app.strategies.multibagger_technical import MultibaggerTechnicalStrategy
 from app.strategies.rb_strategy import RBStrategy
 from app.strategies.vcp_strategy import VCPStrategy
 from app.telegram.alert_manager import AlertManager
+from app.api.test_endpoints import test_router
 
 logger = get_logger(__name__)
 
 api_router = APIRouter()
+
+# Include test endpoints
+api_router.include_router(test_router)
 
 
 # Health endpoints
