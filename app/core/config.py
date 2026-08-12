@@ -34,6 +34,8 @@ class Settings(BaseSettings):
     # Telegram
     telegram_bot_token: str
     telegram_chat_id: str
+    telegram_max_message_length: int = 4096
+    telegram_max_symbols_in_message: int = 20
     
     # API Security
     admin_api_key: str
