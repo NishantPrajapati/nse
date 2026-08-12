@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # NSE Strategy Alerts - GitHub Setup Script
-# This script creates a new GitHub repository and pushes the code
+# This script helps push code to your personal GitHub account
 
 set -e
 
@@ -9,51 +9,46 @@ echo "🚀 NSE Strategy Alerts - GitHub Setup"
 echo "======================================"
 echo ""
 
-# Check if GitHub CLI is installed
-if ! command -v gh &> /dev/null; then
-    echo "❌ GitHub CLI (gh) is not installed."
-    echo "Install it from: https://cli.github.com/"
+# Check if remote is already set
+if git remote get-url origin &> /dev/null; then
+    CURRENT_REMOTE=$(git remote get-url origin)
+    echo "📍 Current remote: $CURRENT_REMOTE"
     echo ""
-    echo "Or use manual setup:"
-    echo "1. Create repository on GitHub: https://github.com/new"
-    echo "2. Repository name: nse-strategy-alerts"
-    echo "3. Make it private (recommended for trading strategies)"
-    echo "4. Run these commands:"
-    echo ""
-    echo "   git remote add origin git@github.com:NishantPrajapati/nse-strategy-alerts.git"
-    echo "   git branch -M main"
-    echo "   git push -u origin main"
-    exit 1
+    
+    if [[ $CURRENT_REMOTE == *"github.com"* ]]; then
+        echo "✅ Remote already configured for github.com"
+        echo ""
+        read -p "Do you want to push to GitHub now? (y/n) " -n 1 -r
+        echo ""
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            echo "📤 Pushing to GitHub..."
+            git push -u origin main
+            echo ""
+            echo "✅ Code pushed successfully!"
+            echo "📍 Repository: https://github.com/NishantPrajapati/nse-strategy-alerts"
+        fi
+        exit 0
+    fi
 fi
 
-# Check if already authenticated
-if ! gh auth status &> /dev/null; then
-    echo "🔐 Please authenticate with GitHub..."
-    gh auth login
-fi
-
-echo "📦 Creating GitHub repository..."
+echo "⚠️  Manual GitHub Setup Required"
 echo ""
-
-# Create private repository
-gh repo create nse-strategy-alerts \
-    --private \
-    --description "Alert-only NSE stock screening system - No auto-trading" \
-    --source=. \
-    --remote=origin \
-    --push
-
+echo "Steps to push to your personal GitHub:"
 echo ""
-echo "✅ Repository created and code pushed!"
+echo "1. Create a new PRIVATE repository on GitHub:"
+echo "   → Go to: https://github.com/new"
+echo "   → Repository name: nse-strategy-alerts"
+echo "   → Make it PRIVATE (recommended for trading strategies)"
+echo "   → Don't initialize with README, .gitignore, or license"
 echo ""
-echo "📍 Repository URL: https://github.com/NishantPrajapati/nse-strategy-alerts"
+echo "2. Push your code:"
+echo "   git push -u origin main"
 echo ""
-echo "Next steps:"
-echo "1. Review DEPLOYMENT_VPS.md for VPS deployment instructions"
-echo "2. Setup .env file with your credentials"
-echo "3. Deploy to VPS using Docker Compose"
+echo "3. Verify on GitHub:"
+echo "   https://github.com/NishantPrajapati/nse-strategy-alerts"
 echo ""
-echo "🔒 Security reminder:"
-echo "   - Never commit .env file (already in .gitignore)"
-echo "   - Keep repository private"
-echo "   - Rotate API keys regularly"
+echo "🔒 Security reminders:"
+echo "   - Repository is set to PRIVATE"
+echo "   - .env file is in .gitignore (never committed)"
+echo "   - Keep API keys secure"
+echo ""
