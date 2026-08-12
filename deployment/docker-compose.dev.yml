@@ -1,0 +1,16 @@
+version: '3.8'
+
+# Development override - mount code as volume for hot reload
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+  app:
+    volumes:
+      - ../app:/app/app:ro  # Mount app code as read-only
+      - ../alembic:/app/alembic:ro  # Mount alembic migrations
+      - ../logs:/app/logs
+      - ../data:/app/data
+    environment:
+      DEBUG: "true"
+      LOG_LEVEL: DEBUG
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload

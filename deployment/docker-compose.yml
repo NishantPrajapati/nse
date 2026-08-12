@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: docker.io/library/postgres:15-alpine
+    container_name: nse-alerts-db
+    environment:
+      POSTGRES_DB: nse_alerts
+      POSTGRES_USER: nse_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-nse_password}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.UTF-8"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nse_user -d nse_alerts"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - nse-network
+
+  app:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    container_name: nse-alerts-app
+    environment:
+      DATABASE_URL: postgresql+asyncpg://nse_user:${DB_PASSWORD:-nse_password}@postgres:5432/nse_alerts
+      ANGEL_API_KEY: ${ANGEL_API_KEY}
+      ANGEL_CLIENT_ID: ${ANGEL_CLIENT_ID}
+      ANGEL_PASSWORD: ${ANGEL_PASSWORD}
+      ANGEL_TOTP_SECRET: ${ANGEL_TOTP_SECRET}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
+      FUNDAMENTALS_PROVIDER: ${FUNDAMENTALS_PROVIDER:-mock}
+      SECRET_KEY: ${SECRET_KEY}
+      ADMIN_API_KEY: ${ADMIN_API_KEY}
+      ENABLE_SCHEDULER: ${ENABLE_SCHEDULER:-true}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      DEBUG: ${DEBUG:-false}
+    volumes:
+      # Mount code for development (no rebuild needed for code changes)
+      - ../app:/app/app:ro
+      - ../alembic:/app/alembic:ro
+      # Persistent data
+      - ../logs:/app/logs
+      - ../data:/app/data
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - nse-network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  nse-network:
+    driver: bridge
