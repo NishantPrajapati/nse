@@ -29,20 +29,6 @@ services:
     container_name: nse-alerts-app
     env_file:
       - ../.env
-    environment:
-      DATABASE_URL: postgresql+asyncpg://nse_user:${DB_PASSWORD:-nse_password}@postgres:5432/nse_alerts
-      ANGEL_API_KEY: ${ANGEL_API_KEY}
-      ANGEL_CLIENT_ID: ${ANGEL_CLIENT_ID}
-      ANGEL_PASSWORD: ${ANGEL_PASSWORD}
-      ANGEL_TOTP_SECRET: ${ANGEL_TOTP_SECRET}
-      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
-      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
-      FUNDAMENTALS_PROVIDER: ${FUNDAMENTALS_PROVIDER:-mock}
-      SECRET_KEY: ${SECRET_KEY}
-      ADMIN_API_KEY: ${ADMIN_API_KEY}
-      ENABLE_SCHEDULER: ${ENABLE_SCHEDULER:-true}
-      LOG_LEVEL: ${LOG_LEVEL:-INFO}
-      DEBUG: ${DEBUG:-false}
     volumes:
       # Mount code for development (no rebuild needed for code changes)
       - ../app:/app/app:ro
