@@ -36,8 +36,8 @@ class Settings(BaseSettings):
     telegram_chat_id: str
     
     # API Security
-    api_key: str
     admin_api_key: str
+    secret_key: str
     
     # Strategy Scheduling (24-hour format HH:MM)
     vcp_scan_time: str = "18:30"
