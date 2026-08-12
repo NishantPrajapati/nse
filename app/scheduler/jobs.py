@@ -327,7 +327,7 @@ class SchedulerManager:
         self.scheduler.add_job(
             self.data_ingestion_job,
             CronTrigger.from_crontab(
-                f"{settings.data_ingestion_time.split(':')[1]} {settings.data_ingestion_time.split(':')[0]} * * 1-5",
+                f"{settings.daily_ingest_time.split(':')[1]} {settings.daily_ingest_time.split(':')[0]} * * 1-5",
                 timezone=settings.scheduler_timezone,
             ),
             id="data_ingestion",
@@ -335,11 +335,13 @@ class SchedulerManager:
             replace_existing=True,
         )
         
-        # Data ready check job
+        # Data ready check job (2 hours after daily ingest)
+        ready_hour = (int(settings.daily_ingest_time.split(':')[0]) + settings.data_ready_threshold_hours) % 24
+        ready_minute = settings.daily_ingest_time.split(':')[1]
         self.scheduler.add_job(
             self.data_ready_check_job,
             CronTrigger.from_crontab(
-                f"{settings.data_ready_check_time.split(':')[1]} {settings.data_ready_check_time.split(':')[0]} * * 1-5",
+                f"{ready_minute} {ready_hour} * * 1-5",
                 timezone=settings.scheduler_timezone,
             ),
             id="data_ready_check",
