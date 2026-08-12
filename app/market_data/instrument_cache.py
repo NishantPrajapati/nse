@@ -21,8 +21,8 @@ class InstrumentCache:
     def __init__(self):
         """Initialize instrument cache."""
         self._last_refresh: Optional[datetime] = None
-        self._cache_ttl = timedelta(seconds=settings.cache_instruments_ttl)
-        logger.info("Instrument cache initialized", ttl_seconds=settings.cache_instruments_ttl)
+        self._cache_ttl = timedelta(hours=settings.instrument_cache_ttl_hours)
+        logger.info("Instrument cache initialized", ttl_hours=settings.instrument_cache_ttl_hours)
 
     async def is_cache_valid(self) -> bool:
         """
