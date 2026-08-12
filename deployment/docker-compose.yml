@@ -27,6 +27,8 @@ services:
       context: ..
       dockerfile: deployment/Dockerfile
     container_name: nse-alerts-app
+    env_file:
+      - ../.env
     environment:
       DATABASE_URL: postgresql+asyncpg://nse_user:${DB_PASSWORD:-nse_password}@postgres:5432/nse_alerts
       ANGEL_API_KEY: ${ANGEL_API_KEY}
