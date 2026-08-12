@@ -67,10 +67,10 @@ class AngelOneClient:
     
     def __init__(self):
         """Initialize Angel One client."""
-        self.api_key = settings.angel_api_key
-        self.client_id = settings.angel_client_id
-        self.password = settings.angel_password
-        self.totp_secret = settings.angel_totp_secret
+        self.api_key = settings.angel_one_api_key
+        self.client_id = settings.angel_one_client_id
+        self.password = settings.angel_one_password
+        self.totp_secret = settings.angel_one_totp_secret
         
         self.session_token: Optional[str] = None
         self.refresh_token: Optional[str] = None

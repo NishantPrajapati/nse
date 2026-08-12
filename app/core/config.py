@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     angel_one_client_id: str
     angel_one_password: str
     angel_one_totp_secret: str
+    angel_api_timeout: int = 30
+    angel_rate_limit_calls: int = 10
+    angel_rate_limit_period: int = 1
     
     # Telegram
     telegram_bot_token: str
@@ -62,6 +65,12 @@ class Settings(BaseSettings):
     enable_scheduler: bool = True
     scheduler_timezone: str = "Asia/Kolkata"
     
+    # Strategy Enable/Disable
+    enable_vcp_strategy: bool = True
+    enable_rb_strategy: bool = True
+    enable_multibagger_strategy: bool = True
+    enable_fundamental_strategy: bool = True
+    
     # Fundamentals Provider
     fundamentals_provider: str = "mock"  # Options: mock, screener, tickertape
     
@@ -73,6 +82,8 @@ class Settings(BaseSettings):
     enable_telegram_alerts: bool = True
     alert_batch_size: int = 10
     alert_delay_seconds: int = 2
+    telegram_retry_delay: int = 60
+    max_data_delay_hours: int = 48
     
     # Performance Settings
     max_concurrent_requests: int = 10
