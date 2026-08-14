@@ -127,12 +127,16 @@ class NSECalendar:
 
     def get_current_datetime(self) -> datetime:
         """
-        Get current datetime in IST.
+        Get current datetime in IST, returned as naive UTC datetime for database compatibility.
         
         Returns:
-            Current datetime in IST
+            Current datetime in UTC (naive, no timezone info)
         """
-        return datetime.now(self.timezone)
+        # Get current time in IST
+        ist_time = datetime.now(self.timezone)
+        # Convert to UTC and remove timezone info for database compatibility
+        utc_time = ist_time.astimezone(pytz.UTC).replace(tzinfo=None)
+        return utc_time
 
     def get_previous_trading_day(
         self,
