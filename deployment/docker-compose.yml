@@ -11,8 +11,8 @@ services:
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.UTF-8"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+    # Port removed - not exposed publicly for security
+    # Access via: docker compose exec postgres psql -U nse_user -d nse_alerts
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U nse_user -d nse_alerts"]
       interval: 10s
@@ -36,8 +36,8 @@ services:
       # Persistent data
       - ../logs:/app/logs
       - ../data:/app/data
-    ports:
-      - "8000:8000"
+    # Port removed - not exposed publicly for security
+    # Access via SSH tunnel: ssh -L 8000:localhost:8000 user@vps
     depends_on:
       postgres:
         condition: service_healthy
